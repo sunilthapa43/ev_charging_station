@@ -13,6 +13,8 @@ def get_model():
         print("Seems like model is already trained and ready to use")
         # load model
         model = tf.keras.models.load_model(OUTPUT_FOLDER_PATH + '/ML_MLP.h5')
+        # this model shall be compiled again
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         X_test = pd.read_csv(OUTPUT_FOLDER_PATH + '/X_test.csv')
         y_test = pd.read_csv(OUTPUT_FOLDER_PATH + '/y_test.csv')
     else:

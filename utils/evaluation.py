@@ -65,7 +65,8 @@ def handle_write(y_test, per_sample_prediction_times, per_sample_memory_usages, 
                             [accuracy, precision, recall, f1, conversion_time, Average_prediction_time,
                              Average_prediction_memory_consumption, model_size]
                             })
-
+    print("OUTPUT DATAFRAME LOOKS LIKE")
+    outputs.head()
     outputs.to_csv(output_path + "/outputs.csv", index=False)
 
     # Convert the lists to DataFrames
@@ -124,7 +125,6 @@ def evaluate_model(model, early_stopping, X_train, y_train, X_test, y_test):
 
 def evaluate_tiny_ml(interpreter, X_test, y_test):
 
-    print(X_test, y_test)
     # # Get input and output tensors.
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
@@ -165,4 +165,4 @@ def evaluate_tiny_ml(interpreter, X_test, y_test):
         gc.enable()  # Enable garbage collector
     handle_write(y_test=y_test, per_sample_prediction_times=per_sample_prediction_timesT,
                      per_sample_memory_usages=per_sample_memory_usagesT,
-                     X_test=X_test)
+                     X_test=X_test, y_preds=predictions)
