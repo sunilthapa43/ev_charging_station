@@ -20,8 +20,7 @@ This project aims to explore the integration of Tiny Machine Learning (TinyML) a
     - numpy
     - pandas
     - scikit-learn
-    - TensorFlow or PyTorch (depending on the model used)
-    - (Other dependencies as needed)
+    - TensorFlow 
     - more requirements are listed under the file requirements.txt
 
 ## Installation
