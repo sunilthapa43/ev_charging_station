@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
 import math
+import seaborn as sns
+from pandas.plotting import table
 
 
 # from config import OUTPUT_FOLDER_PATH, TINYML_OUTPUT_FOLDER_PATH
@@ -62,9 +64,76 @@ def plot_histogram(data, columnName, unit, title):
     plt.rcParams['font.family'] = 'Calibri'
     plt.show()
 
+    # alternatively you can directly save the figure as: plt.savefig(filename), then plt.close()
+
 
 # plot_histogram(pd.read_csv(OUTPUT_FOLDER_PATH+'/per_sample_memory.csv'), 'Memory' , 'KB', 'ML_MLP Memory Consumption')
 plot_histogram(pd.read_csv(TINYML_OUTPUT_FOLDER_PATH+'/per_sample_memory.csv'), 'Memory', 'Bytes', 'TinyML_MLP Memory Consumption')
 
 plot_histogram(pd.read_csv(OUTPUT_FOLDER_PATH+'/prediction_times.csv'), 'Time', 'ms', 'ML_MLP Inference Time')
 plot_histogram(pd.read_csv(TINYML_OUTPUT_FOLDER_PATH+'/prediction_times.csv'), 'Time','\u03BC' + 's', 'TinyML_MLP Inference Time')
+
+
+
+
+
+
+# Load the CSV results for both models
+mlp_results = pd.read_csv('D:\Projects\ev_charging_station\model_outputs\k_fold_results.csv')
+rf_results = pd.read_csv('D:\Projects\ev_charging_station\model_outputs\k_fold_results_mlp.csv')
+# Create a comparative DataFrame
+comparison_df = pd.DataFrame({
+    'Fold': mlp_results['Fold'],
+    'MLP Accuracy': mlp_results['Accuracy'],
+    'RF Accuracy': rf_results['Accuracy'],
+    'MLP Precision': mlp_results['Precision'],
+    'RF Precision': rf_results['Precision'],
+    'MLP Recall': mlp_results['Recall'],
+    'RF Recall': rf_results['Recall'],
+    'MLP F1 Score': mlp_results['F1 Score'],
+    'RF F1 Score': rf_results['F1 Score']
+})
+
+# For making comparisons images
+
+# # Define metrics for comparison
+# metrics = ['Accuracy', 'Precision', 'Recall', 'F1 Score']
+# mlp_columns = [f'MLP {metric}' for metric in metrics]
+# rf_columns = [f'RF {metric}' for metric in metrics]
+#
+# # Create subplots
+# fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+# axes = axes.ravel()  # Flatten axes array for easy iteration
+#
+# for i, metric in enumerate(metrics):
+#     sns.lineplot(x='Fold', y=f'MLP {metric}', data=comparison_df, ax=axes[i], label='MLP', marker='o')
+#     sns.lineplot(x='Fold', y=f'RF {metric}', data=comparison_df, ax=axes[i], label='Random Forest', marker='o')
+#     axes[i].set_title(f'{metric} Comparison')
+#     axes[i].set_ylabel(metric)
+#     axes[i].set_xlabel('Fold')
+#     axes[i].legend()
+#     axes[i].grid(True)
+#
+# # Adjust layout and save the figure
+# plt.tight_layout()
+# plt.savefig('comparison_metrics.png')
+# plt.show()
+
+
+# For making a comparison table
+mean_values = comparison_df.mean().to_frame().T
+mean_values['Fold'] = 'Mean'
+comparison_df = pd.concat([comparison_df, mean_values], ignore_index=True)
+
+# Create a figure and hide axes
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.axis('off')  # Hide the axes
+
+# Create a table
+tbl = table(ax, comparison_df, loc='center', cellLoc='center', colWidths=[0.1] * len(comparison_df.columns))
+tbl.auto_set_font_size(False) # Activate auto font size
+tbl.set_fontsize(10)
+tbl.scale(1.2, 1.2)  # Scale table
+plt.title('Comparison of MLP and Random Forest Results', fontsize=14)
+plt.savefig('comparison_results_table.png', bbox_inches='tight')
+plt.show()
